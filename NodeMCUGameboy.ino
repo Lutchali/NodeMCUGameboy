@@ -2,10 +2,8 @@
 #include <TFT_eSPI.h>
 #include <MPU9250.h>
 
-int x = 115;
-int y = 155;
-int X = 115;
-int Y = 155;
+int X = 155;
+int Y = 115;
 int prevX = 0;
 int prevY = 0;
 int accelX = 0;
@@ -22,7 +20,7 @@ void setup() {
   Sensor.setDlpfBandwidth(MPU9250::DLPF_BANDWIDTH_20HZ);
   Sensor.setSrd(19);     
   tft.init();
-  tft.setRotation(0);
+  tft.setRotation(1);
   tft.fillScreen(ILI9341_BLACK);
   tft.setTextColor(TFT_RED);                             
 }
@@ -47,18 +45,23 @@ void loop() {
   Serial.print(Sensor.getMagZ_uT(),0);  
   Serial.print("\t");  
   Serial.println(Sensor.getTemperature_C(),0);  
-  accelX = 10 * Sensor.getAccelX_mss();
-  accelY = 10 * Sensor.getAccelY_mss();
-  if (y + accelY > 120){
-    Y = y + accelY;  
+  accelY = 10 * -Sensor.getAccelX_mss();
+  accelX = 10 * Sensor.getAccelY_mss();
+   if ((X + accelX < 321) and (X + accelX > 0)){
+    X = X + accelX;  
   }
   else{
-    Y = 120;
+    X = 155;
   }
-  X = x + accelX;
+  if ((Y + accelY < 200) and (Y + accelY > 0)){
+    Y = Y + accelY;  
+  }
+  else{
+    Y = 115;
+  }
   tft.fillRect(prevX,prevY,10,10,TFT_BLACK);
   tft.fillRect(X,Y,10,10,TFT_RED);
-  tft.fillRect(1,1,240,120,TFT_GREEN);
+  tft.fillRect(1,200,320,40,TFT_GREEN);
   prevX = X;
   prevY = Y;
   delay(20);
